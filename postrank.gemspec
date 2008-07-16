@@ -14,6 +14,6 @@ Gem::Specification.new do |s|
                      '--line-numbers'
    s.add_dependency('')
    s.files = [ "README", "COPYING" ]
-   s.files << FileList['lib/**/*.rb', 'test/**/*'].to_a
-   s.test_files = FileList['test/**/*_test.rb'].to_a
+   s.files << FileList['lib/**/*.rb', 'test/**/*', 'examples/**/*.rb'].to_a
+   s.test_files = FileList['test/**/test_*.rb'].to_a
 end
