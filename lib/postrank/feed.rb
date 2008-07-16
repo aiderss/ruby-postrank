@@ -35,7 +35,7 @@ module PostRank
     end
 
     def to_s
-      return @title if !@title.nil? && !@title.blank?
+      return @title if !@title.nil? && !@title.empty?
       @url
     end
   end

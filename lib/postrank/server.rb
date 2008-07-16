@@ -44,7 +44,7 @@ module PostRank
 
       params = []
       urls.each { |url| params << ['url[]', url] }
-      feeds.each { |feed| ['feed[]', feed] }
+      feeds.each { |feed| params << ['feed[]', feed] }
 
       d = JSON.parse(post(Method::POST_RANK, Format::JSON, params))
       raise Exception, d['error'] if d.has_key?('error')
