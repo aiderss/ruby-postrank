@@ -30,6 +30,9 @@ module PostRank
     end
 
     def feed(url, priority=85)
+      priority = 70 if priority < 70
+      priority = 100 if priority > 100
+
       raise Exception, "Invalid url" if !valid_url(url)
       d = JSON.parse(get(Method::FEED_ID, Format::JSON, [['priority', priority], ['url', url]]))
       raise Exception, d['error'] if d.has_key?('error')
@@ -51,7 +54,7 @@ module PostRank
         data = d[url]
 
         e = Entry.new
-        e.link = url
+        e.original_link = url
         e.post_rank = data['postrank']
         e.post_rank_color = data['postrank_color']
 

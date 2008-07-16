@@ -9,6 +9,9 @@ module PostRank
     end
 
     def entries(level=Level::ALL, count=15, start=0)
+      count = 1 if count < 0
+      count = 30 if count > 30
+
       d = JSON.parse(@server.get(Method::FEED, Format::JSON, [['feed_id', @feed_id], ['level', level], 
                                                               ['num', count], ['start', start]]))
       raise Exception, d['error'] if !d.is_a?(Array) && d.has_key?('error')
@@ -20,6 +23,9 @@ module PostRank
     end
 
     def top_posts(period=Period::AUTO, count=15)
+      count = 1 if count < 0
+      count = 30 if count > 30
+
       d = JSON.parse(@server.get(Method::TOP_POSTS, Format::JSON, [['feed_id', @feed_id], 
                                                                    ['period', period],
                                                                    ['num', count]]))

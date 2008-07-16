@@ -23,11 +23,11 @@ module PostRank
     end
   
     def title
-      @title || @link
+      @title || @original_link
     end
 
     def to_s
-      "#{@original_link} -- Post rank: #{@post_rank}"
+      "#{original_link} -- Post rank: #{post_rank}"
     end
   end
 end
