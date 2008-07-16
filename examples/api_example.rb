@@ -7,7 +7,6 @@ include PostRank
 
 s = Server.new("com.everburning")
 
-# not sure if I like these as API, short and could pollute when including PostRank
 puts "Using API version: #{Server.api_version}"
 puts "PostRank Server: #{s.server}:#{s.port}"
 
