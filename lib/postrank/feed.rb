@@ -21,6 +21,7 @@ module PostRank
     def entries(opts={})
       defs = {:level => Level::ALL, :count => 15, :start => 0}.merge(opts)
       validate_options(defs)
+      defs[:start] = 0 if !defs[:start].is_a?(Fixnum) || defs[:start] < 0
 
       d = JSON.parse(@server.get(Method::FEED, Format::JSON, [['feed_id', @feed_id],
                                                               ['level', defs[:level]],
@@ -57,6 +58,7 @@ module PostRank
 
     private
     def validate_options(opts)
+      opts[:count] = 15 if !opts[:count].is_a?(Fixnum)
       opts[:count] = 1 if opts[:count] < 0
       opts[:count] = 30 if opts[:count] > 30
     end

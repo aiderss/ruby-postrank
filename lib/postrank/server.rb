@@ -46,6 +46,7 @@ module PostRank
     #   :priority => [70..100]      - The feed load priority. 70 high, 100 low
     def feed(url, opts={})
       defs = { :priority => 85 }.merge(opts)
+      defs[:priority] = 85 if !defs[:priority].is_a?(Fixnum)
       defs[:priority] = 70 if defs[:priority] < 70
       defs[:priority] = 100 if defs[:priority] > 100
 
@@ -66,8 +67,15 @@ module PostRank
       return [] if urls.empty?
 
       params = []
-      urls.each { |url| params << ['url[]', url] }
-      defs[:feeds].each { |feed| params << ['feed[]', feed] }
+      urls.each do |url| 
+        raise Exception, 'Bad URL' if !valid_url(url)
+        params << ['url[]', url]
+      end
+
+      defs[:feeds].each do |feed|
+        raise Exception, 'Invalid feed' if !feed.is_a?(Feed) || feed.feed_id.nil?
+        params << ['feed[]', feed]
+      end
 
       d = JSON.parse(post(Method::POST_RANK, Format::JSON, params))
       raise Exception, d['error'] if d.has_key?('error')
@@ -89,14 +97,17 @@ module PostRank
     # using +format+.  The +params+ array is an array of arrays. Each 
     # internal array is the key=value pair that will be passed to the request
     def get(method, format, params=[])
-      Net::HTTP.get(URI.parse("http://#{@server}:#{@port}" + base_url(method, format) + join_params(params)))
+      Net::HTTP.get(URI.parse("http://#{@server}:#{@port}" +
+                               base_url(method, format) +
+                               join_params(params)))
     end
 
     # Send a POST request to the server for the API +method+ and request
     # using +format+. The +params+ array is an array of arrays. Each
     # internal array is the key=value pair that will be sent in the request body
     def post(method, format, params=[])
-      Net::HTTP.new(@server, @port).post(base_url(method, format), join_params(params)).body
+      Net::HTTP.new(@server, @port).post(base_url(method, format),
+                                          join_params(params)).body
     end
 
     # Retrieve the PostRank API version being queried

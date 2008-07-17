@@ -6,14 +6,21 @@ include PostRank
 class ServerTest < Test::Unit::TestCase
   def test_new_server
     assert_not_nil create_server
-    assert_not_nil Server.new("com.everburing", :server => 'here.com')
+    assert_not_nil Server.new("com.everburning", :server => 'here.com')
     assert_not_nil Server.new("com.everburning", :port => 443)
+
+    s = Server.new("com.everburning", :server => 'here.com', :port => 443)
+    assert_not_nil s
+    assert_equal 443, s.port
+    assert_equal 'here.com', s.server
+    assert_equal 'com.everburning', s.app_key
   end
 
   def test_new_server_with_invalid_server
     assert_raise Exception do Server.new("com.everburning", :server => 'alskdfj') end
     assert_raise Exception do Server.new("com.everburning", :server => 'http:/asdf') end
     assert_raise Exception do Server.new("com.everburning", :server => 'http://foo') end
+    assert_raise Exception do Server.new("com.everburning", :server => nil) end
   end
 
   def test_new_server_with_invalid_application_name
@@ -26,6 +33,7 @@ class ServerTest < Test::Unit::TestCase
     assert_raise Exception do Server.new("com.everburning", :port => "asdf") end
     assert_raise Exception do Server.new("com.everburning", :port => -1) end
     assert_raise Exception do Server.new("com.everburning", :port => 65536) end
+    assert_raise Exception do Server.new("com.everburning", :port => nil) end
   end
 
   def test_api_version
@@ -48,6 +56,31 @@ class ServerTest < Test::Unit::TestCase
     assert ret.is_a?(Array)
     assert_equal 3, ret.length
     assert ret.first.is_a?(Entry)
+  end
+
+  def test_post_rank_bad_urls
+    assert_raise Exception do create_server.post_rank(['asd']) end
+    assert_raise Exception do create_server.post_rank([1234]) end
+    assert_raise Exception do create_server.post_rank([nil]) end
+
+    assert_raise Exception do create_server.post_rank(['foo.com'], :feeds => [1234]) end
+    assert_raise Exception do create_server.post_rank(['foo.com'], :feeds => ['asdf']) end
+    assert_raise Exception do create_server.post_rank(['foo.com'],
+                                            :feeds => [Feed.new(nil, nil, nil, nil)]) end
+  end
+
+  def test_feed
+    f = create_server.feed("http://everburning.com")
+    assert_not_nil f
+    assert f.is_a?(Feed)
+    assert f.feed_id > 0
+    assert_equal "http://everburning.com", f.link
+  end
+
+  def test_bad_feed
+    assert_raise Exception do create_server.feed(1234) end
+    assert_raise Exception do create_server.feed('asdf') end
+    assert_raise Exception do create_server.feed(nil) end
   end
 
   private

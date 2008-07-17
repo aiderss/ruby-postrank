@@ -4,18 +4,6 @@ require 'postrank'
 include PostRank
 
 class FeedTest < Test::Unit::TestCase
-  def test_get_feed
-    f = create_feed
-
-    assert_not_nil f
-    assert f.is_a?(Feed)
-    assert_equal f.url, "everburning.com"
-  end
-
-  def test_invalid_feed
-    assert_raise Exception do create_feed("blahblahblah.com") end
-  end
-
   def test_get_entries
     entries = create_feed.entries
 
@@ -29,8 +17,11 @@ class FeedTest < Test::Unit::TestCase
     assert_raise Exception do create_feed("blahblahlbha").entries end
   end
 
-  def test_gets_two_entries
+  def test_get_entries_with_count
     assert_equal 2, create_feed.entries(:count => 2).length
+    assert_equal 1, create_feed.entries(:count => -1).length 
+    assert_equal 15, create_feed.entries(:count => "asdf").length
+    assert_equal 15, create_feed.entries(:count => nil).length
   end
 
   def test_starts_entries_at_index
