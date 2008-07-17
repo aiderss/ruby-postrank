@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
                     '--main' << 'README.rdoc' <<
                     '--line-numbers'
 
-  s.files = [ "README.rdoc", "COPYING" ] + Dir['lib/**/*.rb'] + Dir['examples/**/*.rb']
+  s.files = %w(README.rdoc COPYING lib/postrank.rb lib/postrank/server.rb lib/postrank/feed.rb lib/postrank/entry.rb examples/api_example.rb examples/api_example2.rb examples/simple_example.rb)
 
-  s.test_files = Dir['test/**/test_*.rb']
+  s.test_files = %w(test/test_server.rb test/test_feed.rb)
 end
