@@ -9,12 +9,12 @@ server = Server.new("com.everburning")
 eb = server.feed("http://everburning.com")
     
 puts "The GREAT everburning feeds"
-eb.entries(Level::GREAT).each do |entry|
+eb.entries(:level => Level::GREAT).each do |entry|
   puts entry 
 end 
 
 puts "\nThe top 5 posts in the last week on everburing"
-eb.top_posts(Period::WEEK).each do |entry|
+eb.top_posts(:period => Period::WEEK).each do |entry|
   puts "#{entry.title} -- #{entry.post_rank} -- #{entry.post_rank_color}"
 end
 
@@ -29,7 +29,7 @@ puts "\nGet PostRanked items"
 server.post_rank(['http://everburning.com/news/on-recent-media/',
                   'http://everburning.com/news/californication/',
                   'http://everburning.com/news/the-weary-traveler/'],
-            [eb]).each do |entry|
+            :feeds => [eb]).each do |entry|
   puts entry
 end
 

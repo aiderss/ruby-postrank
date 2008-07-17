@@ -18,19 +18,19 @@ puts eb
 
 # Retrieve the first 15 Great level entries
 puts "Getting GREAT entries"
-eb.entries(Level::GREAT).each do |entry|
+eb.entries(:level => Level::GREAT).each do |entry|
   puts entry
 end
 
 # Retrieve items 15-45 of the All feed
 puts "\nGetting ALL entries between 15 and 45"
-eb.entries(Level::ALL, 30, 15).each do |entry|
+eb.entries(:count => 30, :start => 15).each do |entry|
   puts entry
 end
 
 # Retrieve the first 15 top posts in the last week
 puts "\nGetting top 15 posts from last week"
-eb.top_posts(Period::WEEK).each do |entry|
+eb.top_posts(:period => Period::WEEK).each do |entry|
   puts entry
 end
 
@@ -44,7 +44,7 @@ end
 # Retrieve the postrank
 puts "\nGetting postrank"
 s.post_rank(['http://ever...', 'http://blah'],
-            [eb, perplex]).each do |post|
+            :feeds => [eb, perplex]).each do |post|
   puts post
 end
 

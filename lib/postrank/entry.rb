@@ -4,12 +4,10 @@ module PostRank
     attr_accessor :original_link, :comments, :comment_rss
     attr_accessor :slash_comments, :post_rank, :post_rank_color
 
-    def initialize(item=nil)
-      return if item.nil?
-
+    def initialize(item={})
       @title = item['title']
       @content = item['description']
-      @publish_date = Time.at(item['pubdate'])
+      @publish_date = item['pubdate'] ? Time.at(item['pubdate']) : nil
 
       @link = item['link']
       @original_link = item['original_link']

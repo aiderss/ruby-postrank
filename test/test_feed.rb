@@ -32,18 +32,18 @@ class FeedTest < Test::Unit::TestCase
 
   def test_gets_two_entries
     f = Server.new("com.everburning").feed("everburning.com")
-    entries = f.entries(Level::ALL, 2)
+    entries = f.entries(:count => 2)
 
     assert_equal 2, entries.length
   end
 
   def test_starts_entries_at_index
     f = Server.new("com.everburning").feed("everburning.com")
-    e = f.entries(Level::ALL, 4)
+    e = f.entries(:count => 4)
     e.shift  # pop the first two items so we start where e2 will start
     e.shift
 
-    e2 = f.entries(Level::ALL, 2, 2)
+    e2 = f.entries(:count => 2, :start => 2)
 
     assert_equal e[0].original_link, e2[0].original_link
     assert_equal e[1].original_link, e2[1].original_link

@@ -1,4 +1,4 @@
-require 'CGI'
+require 'cgi'
 require 'json'
 require 'net/http'
 require 'uri'
@@ -10,13 +10,15 @@ module PostRank
     @@api_version = 'v1'
 
     def initialize(app_key, opts={})
+      defs = {:server => 'api.postrank.com', :port => 80}.merge(opts)
+
       raise Exception, "Application name is invalid" if app_key.nil? ||
                                                        !app_key.is_a?(String) ||
                                                         app_key.empty?
 
-      self.app_key = app_key
-      self.server = opts[:server] || 'api.postrank.com'
-      self.port = opts[:port] || 80
+      @app_key = app_key
+      self.server = defs[:server]
+      self.port = defs[:port]
     end
 
     def server=(server)
@@ -29,34 +31,35 @@ module PostRank
       @port = port
     end
 
-    def feed(url, priority=85)
-      priority = 70 if priority < 70
-      priority = 100 if priority > 100
+    def feed(url, opts={})
+      defs = { :priority => 85 }.merge(opts)
+      defs[:priority] = 70 if defs[:priority] < 70
+      defs[:priority] = 100 if defs[:priority] > 100
 
       raise Exception, "Invalid url" if !valid_url(url)
-      d = JSON.parse(get(Method::FEED_ID, Format::JSON, [['priority', priority], ['url', url]]))
+      d = JSON.parse(get(Method::FEED_ID, Format::JSON, [['priority', defs[:priority]],
+                                                         ['url', url]]))
       raise Exception, d['error'] if d.has_key?('error')
       Feed.new(self, d['feed_id'], d['url'], d['link'])
     end
 
-    def post_rank(urls=[], feeds=[])
+    def post_rank(urls=[], opts={})
+      defs = { :feeds => [] }.merge(opts)
       return [] if urls.empty?
 
       params = []
       urls.each { |url| params << ['url[]', url] }
-      feeds.each { |feed| params << ['feed[]', feed] }
+      defs[:feeds].each { |feed| params << ['feed[]', feed] }
 
       d = JSON.parse(post(Method::POST_RANK, Format::JSON, params))
       raise Exception, d['error'] if d.has_key?('error')
 
       ret = []
       urls.each do |url|
-        data = d[url]
-
         e = Entry.new
         e.original_link = url
-        e.post_rank = data['postrank']
-        e.post_rank_color = data['postrank_color']
+        e.post_rank = d[url]['postrank']
+        e.post_rank_color = d[url]['postrank_color']
 
         ret << e
       end

@@ -21,12 +21,12 @@ server = Server.new("com.everburning")
 eb = server.feed("http://everburning.com")
 
 puts "The GREAT everburning feeds"
-eb.entries(Level::GREAT).each do |entry|
+eb.entries(:level => Level::GREAT).each do |entry|
   puts entry
 end
 
 puts "\nThe top 5 posts in the last week on everburning"
-eb.top_posts(Period::WEEK).each do |entry|
+eb.top_posts(:period => Period::WEEK).each do |entry|
   puts "#{entry.title} -- #{entry.post_rank} -- #{entry.post_rank_color}"
 end
 
@@ -41,12 +41,18 @@ puts "\nGet PostRanked items"
 server.post_rank(['http://everburning.com/news/on-recent-media/',
                   'http://everburning.com/news/californication/',
                   'http://everburning.com/news/the-weary-traveler/'],
-            [eb]).each do |entry|
+            :feeds => [eb]).each do |entry|
   puts entry
 end
 
 
-Nothing too special there. Let's see how this thing works.
+Nothing too special there. Let's see how this thing works. One thing you may
+have noticed, some parameters are named, others aren't. What's the deal?
+Well, any required parameter is un-named. It has to be entered so I'm trying
+to keep the redundancy down. Optional parameters are named. This way to
+don't have to enter the three default values just to update a forth
+parameter. I think this gives the best of both worlds for berivity, clarity
+and lazyness.
 
 Everything in the PostRank plugin is defined within the PostRank module. So,
 I'm including PostRank to make my life simpler.
