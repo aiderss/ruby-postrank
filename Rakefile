@@ -20,10 +20,10 @@ spec = Gem::Specification.new do |s|
 
   s.has_rdoc = true
   s.rdoc_options << '--title' << 'PostRank Documentation' <<
-                    '--main' << 'README' <<
+                    '--main' << 'README.rdoc' <<
                     '--line-numbers'
 
-  s.files = [ "README", "COPYING" ] + Dir['lib/**/*.rb'] + Dir['examples/**/*.rb']
+  s.files = [ "README.rdoc", "COPYING" ] + Dir['lib/**/*.rb'] + Dir['examples/**/*.rb']
 
   s.test_files = Dir['test/**/test_*.rb']
 end
@@ -33,14 +33,12 @@ task :default => :test
 
 desc 'Generate RDoc documentation for PostRank'
 Rake::RDocTask.new(:rdoc) do |rdoc|
-  rdoc.rdoc_files.include('README', 'COPYING', 'lib/**/*.rb')
-  rdoc.main = 'README'
+  rdoc.rdoc_files.include('README.rdoc', 'COPYING', 'lib/**/*.rb')
+  rdoc.main = 'README.rdoc'
   rdoc.title = 'PostRank Documentation'
 
   rdoc.rdoc_dir = 'doc'
-  rdoc.options << '--title' << 'PostRank' <<
-                  '--main' << 'README' <<
-                  '--line-numbers'
+  rdoc.options << '--line-numbers'
 end
 
 desc 'Test the PostRank gem'
