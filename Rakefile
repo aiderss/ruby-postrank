@@ -8,14 +8,21 @@ spec = Gem::Specification.new do |s|
   s.version = "0.0.1"
   s.authors = ["dan sinclair"]
   s.email = %q{dj2@everburning.com}
-  s.summary = %q{PostRank provides simple wrapper around the PostRank.com API.}
   s.homepage = %q{http://http://github.com/dj2/ruby-postrank/wikis/}
+
+  s.summary = %q{PostRank provides simple wrapper around the PostRank.com API.}
   s.description = %q{PostRank provides a simple wrapper around the PostRank.com API.}
+
+  s.add_dependency('json')
+  s.requirements << 'cgi'
+  s.requirements << 'uri'
+  s.requirements << 'net/http'
+
   s.has_rdoc = true
   s.rdoc_options << '--title' << 'PostRank Documentation' <<
                     '--main' << 'README' <<
                     '--line-numbers'
-  s.add_dependency('')
+
   s.files = [ "README", "COPYING" ] + Dir['lib/**/*.rb'] + Dir['examples/**/*.rb']
 
   s.test_files = Dir['test/**/test_*.rb']
