@@ -5,7 +5,7 @@ include PostRank
 
 class ServerTest < Test::Unit::TestCase
   def test_new_server
-    assert_not_nil Server.new("com.everburning")
+    assert_not_nil create_server
     assert_not_nil Server.new("com.everburing", :server => 'here.com')
     assert_not_nil Server.new("com.everburning", :port => 443)
   end
@@ -33,22 +33,26 @@ class ServerTest < Test::Unit::TestCase
   end
 
   def test_empty_urls
-    s = Server.new("com.everburning")
+    s = create_server
 
     assert_equal 0, s.post_rank.length
     assert_equal 0, s.post_rank([]).length
   end
 
   def test_post_rank
-    s = Server.new("com.everburning")
-    ret = s.post_rank(['http://everburning.com/news/on-recent-media/',
-                       'http://everburning.com/news/californication/',
-                       'http://everburning.com/news/the-weary-traveler/'])
+    ret = create_server.post_rank(['http://everburning.com/news/on-recent-media/',
+                                   'http://everburning.com/news/californication/',
+                                   'http://everburning.com/news/the-weary-traveler/'])
    
     assert_not_nil ret
     assert ret.is_a?(Array)
     assert_equal 3, ret.length
     assert ret.first.is_a?(Entry)
+  end
+
+  private
+  def create_server(app='com.everburning', opts={})
+    Server.new(app, {:server => 'api.postrank.com', :port => 80}.merge(opts))
   end
 end
 

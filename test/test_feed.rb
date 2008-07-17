@@ -5,7 +5,7 @@ include PostRank
 
 class FeedTest < Test::Unit::TestCase
   def test_get_feed
-    f = Server.new("com.everburning").feed("everburning.com")
+    f = create_feed
 
     assert_not_nil f
     assert f.is_a?(Feed)
@@ -13,12 +13,11 @@ class FeedTest < Test::Unit::TestCase
   end
 
   def test_invalid_feed
-    assert_raise Exception do Server.new("com.everburning").feed("blahblahblah.com") end
+    assert_raise Exception do create_feed("blahblahblah.com") end
   end
 
   def test_get_entries
-    f = Server.new("com.everburning").feed("everburning.com")
-    entries = f.entries
+    entries = create_feed.entries
 
     assert_not_nil entries
     assert entries.is_a?(Array)
@@ -27,18 +26,16 @@ class FeedTest < Test::Unit::TestCase
   end
 
   def test_get_entries_invalid_feed
-    assert_raise Exception do Server.new("com.everburning").feed("blahblahlbha").entries end
+    assert_raise Exception do create_feed("blahblahlbha").entries end
   end
 
   def test_gets_two_entries
-    f = Server.new("com.everburning").feed("everburning.com")
-    entries = f.entries(:count => 2)
-
-    assert_equal 2, entries.length
+    assert_equal 2, create_feed.entries(:count => 2).length
   end
 
   def test_starts_entries_at_index
-    f = Server.new("com.everburning").feed("everburning.com")
+    f = create_feed
+
     e = f.entries(:count => 4)
     e.shift  # pop the first two items so we start where e2 will start
     e.shift
@@ -47,6 +44,15 @@ class FeedTest < Test::Unit::TestCase
 
     assert_equal e[0].original_link, e2[0].original_link
     assert_equal e[1].original_link, e2[1].original_link
+  end
+
+  private
+  def create_server(app='com.everburning', opts={})
+    Server.new(app, {:server => 'api.postrank.com', :port => 80}.merge(opts))
+  end
+
+  def create_feed(feed='everburning.com')
+    create_server.feed(feed)
   end
 end
 
