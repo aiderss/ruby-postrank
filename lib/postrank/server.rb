@@ -88,11 +88,11 @@ module PostRank
     end
 
     def base_url(method, format)
-      "/#{Server.api_version}/#{method}?format=#{format}&appkey=#{self.app_key}&"
+      "/#{Server.api_version}/#{method}?format=#{format}&appkey=#{CGI.escape(self.app_key)}&"
     end
 
     def join_params(params)
-      params.collect{ |p| p.collect { |e| e.to_s }.join('=') }.join('&')
+      params.collect{ |p| p.collect { |e| CGI.escape(e.to_s) }.join('=') }.join('&')
     end
   end
 end
