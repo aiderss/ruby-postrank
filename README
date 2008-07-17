@@ -1,50 +1,46 @@
-Ruby PostRank
-=============
+= Ruby PostRank
 A simple wrapper around the PostRank.com REST API. I've tried to keep the
 API simple without it being a bare API wrapper.
 
-
-Walkthrough
-===========
+= Walkthrough
 I've tried to keep the API as simple as possible. It's about one step above
 the bare PostRank API. Hopefully the added abstraction is useful. The
 easiest way to explain this is probably to show an example. So, here we go.
 
-#!/usr/bin/env ruby
-
-require 'rubygems'
-require 'postrank'
-
-include PostRank
-
-server = Server.new("com.everburning")
-eb = server.feed("http://everburning.com")
-
-puts "The GREAT everburning feeds"
-eb.entries(:level => Level::GREAT).each do |entry|
-  puts entry
-end
-
-puts "\nThe top 5 posts in the last week on everburning"
-eb.top_posts(:period => Period::WEEK).each do |entry|
-  puts "#{entry.title} -- #{entry.post_rank} -- #{entry.post_rank_color}"
-end
-
-puts "\nGet thematic PostRanked items"
-server.post_rank(["http://flickr.com/photos/14009462@N00/2654539960/",
-                  "http://www.flickr.com/photos/21418584@N07/2447928272/",
-                  "http://www.flickr.com/photos/pilou/2655293624/"]).each do |entry|
-  puts entry
-end
-
-puts "\nGet PostRanked items"
-server.post_rank(['http://everburning.com/news/on-recent-media/',
-                  'http://everburning.com/news/californication/',
-                  'http://everburning.com/news/the-weary-traveler/'],
-            :feeds => [eb]).each do |entry|
-  puts entry
-end
-
+  #!/usr/bin/env ruby
+  
+  require 'rubygems'
+  require 'postrank'
+  
+  include PostRank
+  
+  server = Server.new("com.everburning")
+  eb = server.feed("http://everburning.com")
+  
+  puts "The GREAT everburning feeds"
+  eb.entries(:level => Level::GREAT).each do |entry|
+    puts entry
+  end
+  
+  puts "\nThe top 5 posts in the last week on everburning"
+  eb.top_posts(:period => Period::WEEK).each do |entry|
+    puts "#{entry.title} -- #{entry.post_rank} -- #{entry.post_rank_color}"
+  end
+  
+  puts "\nGet thematic PostRanked items"
+  server.post_rank(["http://flickr.com/photos/14009462@N00/2654539960/",
+                    "http://www.flickr.com/photos/21418584@N07/2447928272/",
+                    "http://www.flickr.com/photos/pilou/2655293624/"]).each do |entry|
+    puts entry
+  end
+  
+  puts "\nGet PostRanked items"
+  server.post_rank(['http://everburning.com/news/on-recent-media/',
+                    'http://everburning.com/news/californication/',
+                    'http://everburning.com/news/the-weary-traveler/'],
+              :feeds => [eb]).each do |entry|
+    puts entry
+  end
 
 Nothing too special there. Let's see how this thing works. One thing you may
 have noticed, some parameters are named, others aren't. What's the deal?
@@ -99,9 +95,7 @@ format that you want to lookup. The feeds array is an array of Feed objects.
 
 That's basically it.
 
-
-Contact
-=======
+= Contact
 If you've got any questions, comments or bugs, please let me know. You can
 contact me by email at dj2 at everburning dot com.
 

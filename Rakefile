@@ -3,11 +3,9 @@ require 'rake/rdoctask'
 require 'rake/testtask'
 require 'rake/gempackagetask'
 
-VERSION = "0.0.2"
-
 spec = Gem::Specification.new do |s|
   s.name = %q{postrank}
-  s.version = VERSION
+  s.version = "0.0.2"
   s.authors = ["dan sinclair"]
   s.email = %q{dj2@everburning.com}
   s.homepage = %q{http://http://github.com/dj2/ruby-postrank/wikis/}

@@ -3,7 +3,7 @@ require 'postrank/server'
 require 'postrank/feed'
 require 'postrank/entry'
 
-module PostRank
+module PostRank #:nodoc:
   module Level
     ALL = "all"
     GOOD = "good"
@@ -19,14 +19,14 @@ module PostRank
     AUTO = "auto"
   end
 
-  module Method
+  module Method #:nodoc:
     FEED_ID = "feed_id"
     FEED = "feed"
     TOP_POSTS = "top_posts"
     POST_RANK = "postrank"
   end
 
-  module Format
+  module Format #:nodoc:
     JSON = "json"
     XML = "xml"
     RSS = "rss"
