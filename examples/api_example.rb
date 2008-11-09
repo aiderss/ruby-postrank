@@ -5,46 +5,44 @@ require 'postrank'
 
 include PostRank
 
-s = Server.new("com.everburning")
-
-puts "Using API version: #{Server.api_version}"
-puts "PostRank Server: #{s.server}:#{s.port}"
+conn = Connection.instance
+conn.appkey = "everburning.com/ruby-postrank"
 
 # Retrieve the feed for everburning.com
-eb = s.feed("http://everburning.com")
-perplex = s.feed("http://perplexity.org")
+eb = Feed.find_by_url("http://everburning.com")
+perplex = Feed.find_by_url("http://perplexity.org")
 
 puts eb
 
 # Retrieve the first 15 Great level entries
 puts "Getting GREAT entries"
 eb.entries(:level => Level::GREAT).each do |entry|
-  puts entry
+  puts entry.title
 end
 
 # Retrieve items 15-45 of the All feed
 puts "\nGetting ALL entries between 15 and 45"
 eb.entries(:count => 30, :start => 15).each do |entry|
-  puts entry
+  puts entry.title
 end
 
 # Retrieve the first 15 top posts in the last week
 puts "\nGetting top 15 posts from last week"
-eb.top_posts(:period => Period::WEEK).each do |entry|
-  puts entry
+eb.topposts(:period => Period::WEEK).each do |entry|
+  puts entry.title
 end
 
 # Retrieve the thematic postrank
 puts "\nGetting thematic postrank"
-s.post_rank(['http://everburning.com/as',
+PostRank::PostRank.calculate(['http://everburning.com/as',
              'http://blah.com']).each do |post|
-  puts post
+  puts "#{post.original_link} #{post.postrank}"
 end
 
 # Retrieve the postrank
 puts "\nGetting postrank"
-s.post_rank(['http://ever...', 'http://blah'],
+PostRank::PostRank.calculate(['http://everburning.com', 'http://blah.com'],
             :feeds => [eb, perplex]).each do |post|
-  puts post
+  puts "#{post.original_link} #{post.postrank}"
 end
 
