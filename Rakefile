@@ -1,12 +1,10 @@
 require 'rake'
 require 'rake/rdoctask'
-require 'rake/testtask'
 require 'rake/gempackagetask'
 
 spec = eval(File.read(File.join(File.dirname(__FILE__), "postrank.gemspec")))
 
-desc 'Default: run unit tests'
-task :default => :test
+task :default => :gem
 
 desc 'Generate RDoc documentation for PostRank'
 Rake::RDocTask.new(:rdoc) do |rdoc|
@@ -16,13 +14,6 @@ Rake::RDocTask.new(:rdoc) do |rdoc|
 
   rdoc.rdoc_dir = 'doc'
   rdoc.options << '--line-numbers'
-end
-
-desc 'Test the PostRank gem'
-Rake::TestTask.new(:test) do |t|
-  t.pattern = 'test/**/*_test.rb'
-  t.verbose = true
-  t.libs << 'test'
 end
 
 Rake::GemPackageTask.new(spec) do |pkg|
