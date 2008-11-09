@@ -1,67 +1,93 @@
+require 'net/http'
+require 'uri'
+require 'cgi'
+
 module PostRank
-  # Holds and provides information about a PostRank feed.
   class Feed
-    attr_accessor :feed_id, :url, :link
+    @@baseurl = 'http://api.postrank.com/v2/feed'
 
-    # Create a new  PostRank Feed using the provided +server+, +feed_id+,
-    # +url+ and +link+. All queries done by this feed will be done through
-    # +server+ so it has to be valid
-    def initialize(server, feed_id, url, link)
-      @server = server
-      @feed_id = feed_id
-      @url = url
-      @link = link
-    end
-
-    # Retrieve the entries associated with this feed. The following maybe provided:
-    #
-    #   :level => PostRank::Level      - The feed level to return GOOD, GREAT, etc
-    #   :count => [1..30]              - The number of items to return
-    #   :start => integer              - The start index to return from
+    attr_reader :id, :url, :xml, :title, :description, :fav_icon, :old_id
+    
     def entries(opts={})
-      defs = {:level => Level::ALL, :count => 15, :start => 0}.merge(opts)
-      validate_options(defs)
-      defs[:start] = 0 if !defs[:start].is_a?(Fixnum) || defs[:start] < 0
+      clean(opts)
+      u = "#{@@baseurl}/#{@id}?appkey=#{Connection.instance.appkey}&format=json"
+      u << "&level=#{opts[:level]}" unless opts[:level].nil?
+      u << "&num=#{opts[:num]}" unless opts[:num].nil?
+      u << "&start=#{opts[:start]}" unless opts[:start].nil?
+      u << "&q=#{opts[:q]}" unless opts[:q].nil?
 
-      d = JSON.parse(@server.get(Method::FEED, Format::JSON, [['feed_id', @feed_id],
-                                                              ['level', defs[:level]],
-                                                              ['num', defs[:count]],
-                                                              ['start', defs[:start]]]))
-      raise Exception, d['error'] if !d.is_a?(Array) && d.has_key?('error')
-
-      # try to set the feed title as it's provided in the entries hash 
-      @title = d.first['feed_title'] if @title.nil? || @title.empty?
-
-      d.collect { |item| Entry.new(item) }
+      d = JSON.parse(Net::HTTP.get(URI.parse(u)))
+      raise FeedException.new(d['error']) unless d['error'].nil?
+      d['items'].collect { |item| PostRank::Entry.new(item) }
     end
 
-    # Retrieve the top posts for this feed.  The following maybe provided:
-    #
-    #   :period => PostRank::Period    - The period of time to retrieve from
-    #   :count => [1..30]              - The number of items to return
-    def top_posts(opts={})
-      defs = {:period => Period::AUTO, :count => 15}.merge(opts)
-      validate_options(defs)
+    def topposts(opts={})
+      clean(opts)
 
-      d = JSON.parse(@server.get(Method::TOP_POSTS, Format::JSON, [['feed_id', @feed_id], 
-                                                                   ['period', defs[:period]],
-                                                                   ['num', defs[:count]]]))
-      raise Exception, d['error'] if !d.is_a?(Array) && d.has_key?('error')
+      u = "http://api.postrank.com/v1/top_posts?appkey=#{Connection.instance.appkey}&format=json"
+      u << "&feed_id=#{@old_id}&period=#{opts[:period]}"
+      u << "&num=#{opts[:num].nil? ? 10 : opts[:num]}"
 
-      d.collect { |item| Entry.new(item) }
+      d = JSON.parse(Net::HTTP.get(URI.parse(u)))
+      raise FeedException.new(d['error']) unless d.is_a?(Array) || d['error'].nil?
+      d.collect { |item| PostRank::Entry.new(item) }
     end
 
-    def to_s #:nodoc:
-      return @title if !@title.nil? && !@title.empty?
-      @url
+    class << self
+      def find_by_url(url)
+        u = "#{@@baseurl}/info?appkey=#{Connection.instance.appkey}&id=#{url}&format=json"
+        d = JSON.parse(Net::HTTP.get(URI.parse(u)))
+        raise UnknownFeedException.new(d['error']) unless d['error'].nil?
+        Feed.new(d)
+      end
+
+      def find(id)
+       u = "#{@@baseurl}/#{id}/info?appkey=#{Connection.instance.appkey}&format=json"  
+       d = JSON.parse(Net::HTTP.get(URI.parse(u)))
+       raise UnknownFeedException.new(d['error']) unless d['error'].nil?
+       Feed.new(d)
+      end
+      alias find_by_id find
+    end
+
+    def to_s
+      "#{@title} -- #{@description}"
     end
 
     private
-    def validate_options(opts)
-      opts[:count] = 15 if !opts[:count].is_a?(Fixnum)
-      opts[:count] = 1 if opts[:count] < 0
-      opts[:count] = 30 if opts[:count] > 30
+
+    def initialize(info={})
+      @id = info['id']
+      @old_id = info['feed_id']
+      @url = info['link']
+      @xml = info['xml']
+      @title = info['title']
+      @description = info['description']
+    end
+
+    def clean(opts)
+      if opts[:num]
+        opts[:num] = opts[:num].to_i
+        opts[:num] = 10 if opts[:num] < 1 || opts[:num] > 30
+      end
+
+      if opts[:start]
+        opts[:start] = opts[:start].to_i
+        opts[:start] = 0 if opts[:start] < 0
+      end
+
+      # level is a number or a PostRank::Level
+      if opts[:level]
+        if opts[:level].is_a?(Fixnum)
+          opts[:level] = 1.0 if opts[:level] < 1.0
+          opts[:level] = 10.0 if opts[:level] > 10.0
+        elsif !%w(all good great best).member? opts[:level]
+          opts[:level] = PostRank::Level::ALL
+        end
+      end
+    
+      opts[:period] = PostRank::Period::AUTO unless %w(day week month year auto).member? opts[:period]
+      opts[:q] = CGI::escape(opts[:q]) if opts[:q]
     end
   end
 end
-

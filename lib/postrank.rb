@@ -1,6 +1,12 @@
 require 'rubygems'
-require 'postrank/server'
+require 'json'
+
+require 'postrank/connection'
+require 'postrank/channel'
 require 'postrank/feed'
+require 'postrank/subscription'
+require 'postrank/user'
+require 'postrank/postrank'
 require 'postrank/entry'
 
 module PostRank #:nodoc:
@@ -19,16 +25,30 @@ module PostRank #:nodoc:
     AUTO = "auto"
   end
 
-  module Method #:nodoc:
-    FEED_ID = "feed_id"
-    FEED = "feed"
-    TOP_POSTS = "top_posts"
-    POST_RANK = "postrank"
-  end
-
   module Format #:nodoc:
     JSON = "json"
     XML = "xml"
     RSS = "rss"
+  end
+  
+  class APIException < Exception
+  end
+
+  class UnknownFeedException < APIException
+  end
+  
+  class FeedException < APIException
+  end
+  
+  class ChannelException < APIException
+  end
+  
+  class URLException < APIException
+  end
+  
+  class PostRankException < APIException
+  end
+  
+  class CredentialsException  < APIException
   end
 end
