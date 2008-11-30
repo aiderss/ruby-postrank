@@ -77,7 +77,7 @@ module PostRank
     
     def consumer
       raise InvalidApplicationCredentialsException if @app_secret.nil? || @app_token.nil?
-      OAuth::Consumer.new(@app_token, @app_secret, {:site => "http://postrank.com"})
+      OAuth::Consumer.new(@app_token, @app_secret, {:site => "http://www.postrank.com"})
     end
 
     def have_credentials?

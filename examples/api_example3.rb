@@ -3,8 +3,8 @@ require 'postrank'
 conn = PostRank::Connection.instance
 
 conn.appkey = 'everburning.com/test'
-conn.api_secret = 'lkajds'
-conn.api_token = 'asdf'
+conn.app_secret = 'lkajds'
+conn.app_token = 'asdf'
 
 conn.user_secret = nil
 conn.user_token = nil
