@@ -2,6 +2,10 @@
 A simple wrapper around the PostRank.com REST API. I've tried to keep the
 API simple without it being a bare API wrapper.
 
+= Dependencies
+You will need the OAuth gem installed in order to use Ruby PostRank.
+  - sudo gem install oauth
+
 = Walkthrough
 I've tried to keep the API as simple as possible. It's about one step above
 the bare PostRank API. Hopefully the added abstraction is useful. The
@@ -32,7 +36,7 @@ easiest way to explain this is probably to show an example. So, here we go.
   PostRank::PostRank.calculate(["http://flickr.com/photos/14009462@N00/2654539960/",
                     "http://www.flickr.com/photos/21418584@N07/2447928272/",
                     "http://www.flickr.com/photos/pilou/2655293624/"]).each do |entry|
-    puts "#{entry.original_link #{entry.postrank}"
+    puts "#{entry.original_link} #{entry.postrank}"
   end
   
   puts "\nGet PostRanked items"
@@ -40,9 +44,8 @@ easiest way to explain this is probably to show an example. So, here we go.
                     'http://everburning.com/news/californication/',
                     'http://everburning.com/news/the-weary-traveler/'],
               :feeds => [eb]).each do |entry|
-    puts "#{entry.original_link #{entry.postrank}"
+    puts "#{entry.original_link} #{entry.postrank}"
   end
-
 
 That's basically it.
 
