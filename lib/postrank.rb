@@ -8,6 +8,7 @@ require 'postrank/subscription'
 require 'postrank/user'
 require 'postrank/postrank'
 require 'postrank/entry'
+require 'postrank/recommend'
 
 module PostRank #:nodoc:
   module Level

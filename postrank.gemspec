@@ -19,5 +19,5 @@ Gem::Specification.new do |s|
                     '--main' << 'README.rdoc' <<
                     '--line-numbers'
 
-  s.files = %w(README.rdoc COPYING lib/postrank.rb lib/postrank/channel.rb lib/postrank/connection.rb lib/postrank/entry.rb lib/postrank/feed.rb lib/postrank/postrank.rb lib/postrank/subscription.rb lib/postrank/user.rb examples/api_example.rb examples/api_example2.rb examples/api_example3.rb examples/simple_example.rb)
+  s.files = %w(README.rdoc COPYING lib/postrank.rb lib/postrank/channel.rb lib/postrank/connection.rb lib/postrank/entry.rb lib/postrank/feed.rb lib/postrank/postrank.rb lib/postrank/subscription.rb lib/postrank/user.rb  lib/postrank/recommend.rb examples/api_example.rb examples/api_example2.rb examples/api_example3.rb examples/api_example4.rb examples/simple_example.rb)
 end
